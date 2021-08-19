@@ -20,9 +20,14 @@ const GET_SOLO_QUEUE_DATA_ENDPOINT_START = 'https://'
 const GET_SOLO_QUEUE_DATA_ENDPOINT_END = ".api.riotgames.com/lol/league/v4/entries/by-summoner/"
 
 // Get match Ids
-const GET_MATCH_IDS_ONE = "https://"
-
+const GET_MATCHES_IDS_ONE = "https://"
 const GET_MATCHES_IDS_TWO = ".api.riotgames.com/lol/match/v4/matchlists/by-account/"
+
+// Get match
+const GET_MATCH_ONE = 'https://' // server
+const GET_MATCH_TWO = '.api.riotgames.com/lol/match/v4/matches/' // match id
+const GET_MATCH_THREE = '?api_key='
+
 
 app.get('/:server/:username', async (req, res) => {
 
@@ -64,11 +69,23 @@ app.get('/:server/:username', async (req, res) => {
 
         // console.log(player)
 
-        const matchesIDsResponse = await nodeFetch(GET_MATCH_IDS_ONE + server + GET_MATCHES_IDS_TWO + player.accountId + '?' + 'endIndex=15&beginIndex=1&' + KEY)
+        const matchesIDsResponse = await nodeFetch(GET_MATCHES_IDS_ONE + server + GET_MATCHES_IDS_TWO + player.accountId + '?' + 'endIndex=15&beginIndex=1&' + KEY)
         const matchesIdsData = await matchesIDsResponse.json()
-        console.log('MATCHES:', matchesIdsData)
+        console.log('MATCHES:', matchesIdsData, matchesIdsData.matches.length)
         
         // // console.log(player)
+
+
+
+        matchesIdsData.matches.forEach(async match => {
+            try {
+                const matchResponse = await nodeFetch(GET_MATCH_ONE + server + GET_MATCH_TWO + match.gameId + '?' + KEY)
+                const matchData = await matchResponse.json()
+                console.log(matchData)
+            } catch (error) {
+                console.error(error)
+            }
+        })
 
 
     } catch (error) {
