@@ -82,6 +82,25 @@ app.get('/:server/:username', async (req, res) => {
                 const matchResponse = await nodeFetch(GET_MATCH_ONE + server + GET_MATCH_TWO + match.gameId + '?' + KEY)
                 const matchData = await matchResponse.json()
                 console.log(matchData)
+
+                // START
+
+                const participantsArray = []
+
+                matchData.participants.forEach(participant => {
+                    const participantObj = {
+                        summoner1Id: participant.spell1Id,
+                        summoner2Id: participant.spell2Id,
+
+                        kills: participant.stats.kills,
+                        deaths: participant.stats.deaths,
+                        assists: participant.stats.assits,
+                    }
+                    participantsArray.push(participantObj)
+                })
+
+                // END
+                
             } catch (error) {
                 console.error(error)
             }
@@ -97,12 +116,33 @@ app.listen(PORT, () => {
     console.log('Listening on port:', PORT)
 })
 
-// MID - 2 - 6
-// ADC - 1 - 9
-// TOP - 3 - 7
-// JUNGLE - 4 - 8
-// SUPP - 5 - 10
-
 // If timeline.lane === 'BOTTOM'
     // check the role, if role is DUO_CARRY, lane is adc,
     // else lane is support
+
+
+// Info needed for front end to work
+    // player.matches[0].participants
+        // Each participant
+            // puuid if capable
+
+            // win
+
+            // items - array
+
+            // championName
+
+            // kills - DONE
+            // deaths - DONE
+            // assists - DONE
+
+            // champLevel
+            // totalMinionsKilled
+            // goldEarned
+
+            // profileIcon
+
+            // summoner1Id
+            // summoner2Id
+
+            // summonerName
