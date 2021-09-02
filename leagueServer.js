@@ -31,7 +31,7 @@ app.get('/:server/:username', async (req, res) => {
         matches: '',
         puuid: '',
         id: '',
-        soloQ: '',
+        soloQ: {},
         playerIcon: '',
         matches: []
     }
@@ -49,6 +49,23 @@ app.get('/:server/:username', async (req, res) => {
 
         player.id = nameData.id
         player.puuid = nameData.puuid
+
+        // GETTING ACCOUNT INFO
+        const playerInfoResponse = await nodeFetch(GET_SOLO_QUEUE_DATA_ENDPOINT_START + req.params.server + GET_SOLO_QUEUE_DATA_ENDPOINT_END + nameData.id + '?' + KEY)
+        const playerInfo = await playerInfoResponse.json()
+  
+        try {
+            player.soloQ({
+                rank: playerInfo[0].rank,
+                tier: playerInfo[0].tier,
+                leaguePoints: playerInfo[0].leaguePoints
+            })
+        } catch (err) {
+            player.soloQ({
+                rank: '-',
+                leaguePoints: '-'
+            })
+        }
 
         while (playerMatchesData.length < 10) {
 
