@@ -50,24 +50,31 @@ app.get('/:server/:username', async (req, res) => {
         player.id = nameData.id
         player.puuid = nameData.puuid
 
+        // console.log(player)
+
         // GETTING ACCOUNT INFO
         const playerInfoResponse = await nodeFetch(GET_SOLO_QUEUE_DATA_ENDPOINT_START + req.params.server + GET_SOLO_QUEUE_DATA_ENDPOINT_END + nameData.id + '?' + KEY)
         const playerInfo = await playerInfoResponse.json()
   
         try {
-            player.soloQ({
+            player.soloQ = {
                 rank: playerInfo[0].rank,
                 tier: playerInfo[0].tier,
                 leaguePoints: playerInfo[0].leaguePoints
-            })
+            }
         } catch (err) {
-            player.soloQ({
+            player.soloQ = {
                 rank: '-',
                 leaguePoints: '-'
-            })
+            }
         }
 
-        while (playerMatchesData.length < 10) {
+        console.log(player)
+
+        let startCount = 0
+        let endCount = 10
+
+        while (player.matches.length < 10) {
 
             const matchesIDsResponse = await nodeFetch(GET_MATCHES_BY_PUUID_ENDPOINT_ONE + nameData.puuid + `/ids?start=${startCount.toString()}&count=${endCount.toString()}&` + KEY)
 
@@ -86,6 +93,7 @@ app.get('/:server/:username', async (req, res) => {
         }
         res.status(200).json(player)
     } catch (error) {
+        console.error(error)
         res.json({
             error: 'Could not find matches'
         })
